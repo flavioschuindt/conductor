@@ -509,6 +509,11 @@ public class ExecutionDAOFacade {
         executionDAO.removeTask(taskId);
     }
 
+    public void extendLease(TaskModel taskModel) {
+        taskModel.setUpdateTime(System.currentTimeMillis());
+        executionDAO.updateTask(taskModel);
+    }
+
     public List<PollData> getTaskPollData(String taskName) {
         return pollDataDAO.getPollData(taskName);
     }
@@ -636,7 +641,7 @@ public class ExecutionDAOFacade {
      * @param workflowModel the workflowModel for which the payload data needs to be populated from
      *     external storage (if applicable)
      */
-    private void populateWorkflowAndTaskPayloadData(WorkflowModel workflowModel) {
+    public void populateWorkflowAndTaskPayloadData(WorkflowModel workflowModel) {
         if (StringUtils.isNotBlank(workflowModel.getExternalInputPayloadStoragePath())) {
             Map<String, Object> workflowInputParams =
                     externalPayloadStorageUtils.downloadPayload(
@@ -662,7 +667,7 @@ public class ExecutionDAOFacade {
         workflowModel.getTasks().forEach(this::populateTaskData);
     }
 
-    private void populateTaskData(TaskModel taskModel) {
+    public void populateTaskData(TaskModel taskModel) {
         if (StringUtils.isNotBlank(taskModel.getExternalOutputPayloadStoragePath())) {
             Map<String, Object> outputData =
                     externalPayloadStorageUtils.downloadPayload(
